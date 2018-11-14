@@ -8,7 +8,7 @@
     <h1>All articles for this category : </h1>
     {% for article in articles %}
         <div>
-            <h2>{{ loop.index }} / {{ article.id }} - Category : {{ name }}</h2>
+            <h2>{{ loop.index }} / {{ article.id }} - Category : {{ category.name }}</h2>
             <p>{{ article.content }}</p>
         </div>
     {% endfor %}
