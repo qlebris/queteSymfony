@@ -1,14 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Index{% endblock %}
+{% block title %}Articles{% endblock %}
 
 {% block stylesheets %}{% endblock %}
 
 {% block body %}
-    <h1>All articles from article s table : </h1>
+    <h1>All articles for this tag : </h1>
     {% for article in articles %}
         <div>
-            <h2>{{ loop.index }} / Category : {{ article.category.name }} - {{ article.title }}</h2>
+            <h2> tag : {{ tag.name }}</h2>
+            <h3>{{ loop.index }} - {{ article.title }}</h3>
             <p>{{ article.content }}</p>
         </div>
     {% endfor %}

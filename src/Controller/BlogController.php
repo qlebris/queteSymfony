@@ -10,6 +10,7 @@ namespace App\Controller;
 
 
 use App\Entity\Category;
+use App\Entity\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,6 +68,7 @@ class BlogController extends AbstractController
             ->getRepository(Article::class)
             ->findOneBy(['title' => mb_strtolower($slug)]);
         $articleCategory = $article->getCategory();
+        $tags = $article->getTags();
 
         if (!$article) {
             throw $this->createNotFoundException(
@@ -79,6 +81,7 @@ class BlogController extends AbstractController
             [
                 'article' => $article,
                 'category' => $articleCategory,
+                'tags' => $tags,
                 'slug' => $slug,
             ]
         );
@@ -107,5 +110,32 @@ class BlogController extends AbstractController
             ['articles' => $articles,
                 'category' => $category]
         );
+    }
+
+    /**
+     * @Route("/tag/{tag}", name="blog_show_tag")
+     * @return Response
+     */
+
+    public function showByTag(string $tag) : Response
+    {
+        $tag = $this->getDoctrine()
+            ->getRepository(Tag::class)
+            ->findOneBy(['name' => mb_strtolower($tag)]);
+
+        $articles = $tag->getArticles();
+
+        if (!$articles) {
+            throw $this->createNotFoundException(
+                'No article found in tag\'s table.'
+            );
+        }
+
+        return $this->render(
+            'blog/tag.html.twig',
+            ['articles' => $articles,
+                'tag' => $tag]
+        );
+
     }
 }

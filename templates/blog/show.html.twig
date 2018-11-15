@@ -9,6 +9,14 @@
    <div>
       <h1>Real article s title : {{ article.title }}</h1>
       <h2>Category : {{ article.category.name }}</h2>
+       <strong>Tags :</strong>
+       <ul>
+           {% for tag in tags %}
+               <li>{{ tag.name }} </li>
+           {% else %}
+               <li>No tags for this article</li>
+           {% endfor %}
+       </ul>
       <p>{{ article.content }}</p>
    </div>
 
