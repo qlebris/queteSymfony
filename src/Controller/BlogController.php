@@ -11,7 +11,9 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Tag;
+use App\Form\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Article;
@@ -43,6 +45,104 @@ class BlogController extends AbstractController
             'blog/index.html.twig',
             ['articles' => $articles]
         );
+    }
+
+    /**
+     * @Route("/categories", name="category_index")
+     */
+    public function indexCategory()
+    {
+        $categories = $this->getDoctrine()
+            ->getRepository(Category::class)
+            ->findAll();
+
+        if (!$categories) {
+            throw $this->createNotFoundException(
+                'No category found in category\'s table.'
+            );
+        }
+
+        return $this->render(
+            'blog/categories.html.twig',
+            ['categories' => $categories]
+        );
+    }
+
+    /**
+     * @Route("/category", name="category_add")
+     */
+
+    public function addCategory(Request $request): Response
+    {
+        $form = $this->createForm(CategoryType::class);
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $category = new Category();
+            $category->setName($form->getData()->getName());
+            $em->persist($category);
+            $em->flush();
+        }
+
+
+        return $this->render('/blog/addCategory.html.twig',
+            ['form' => $form->createView()]
+        );
+
+    }
+
+    /**
+     * @Route("/category/{category}", name="blog_show_category")
+     */
+    public function showByCategory(string $category): Response
+    {
+        $category = $this->getDoctrine()
+            ->getRepository(Category::class)
+            ->findOneByName($category);
+
+        $articles = $category->getArticles();
+
+
+        if (!$articles) {
+            throw $this->createNotFoundException(
+                'No article found in category\'s table.'
+            );
+        }
+
+        return $this->render(
+            'blog/category.html.twig',
+            ['articles' => $articles,
+                'category' => $category]
+        );
+    }
+
+    /**
+     * @Route("/tag/{tag}", name="blog_show_tag")
+     * @return Response
+     */
+
+    public function showByTag(string $tag): Response
+    {
+        $tag = $this->getDoctrine()
+            ->getRepository(Tag::class)
+            ->findOneBy(['name' => mb_strtolower($tag)]);
+
+        $articles = $tag->getArticles();
+
+        if (!$articles) {
+            throw $this->createNotFoundException(
+                'No article found in tag\'s table.'
+            );
+        }
+
+        return $this->render(
+            'blog/tag.html.twig',
+            ['articles' => $articles,
+                'tag' => $tag]
+        );
+
     }
 
     /**
@@ -85,57 +185,5 @@ class BlogController extends AbstractController
                 'slug' => $slug,
             ]
         );
-    }
-
-    /**
-     * @Route("/category/{category}", name="blog_show_category")
-     */
-    public function showByCategory(string $category): Response
-    {
-        $category = $this->getDoctrine()
-            ->getRepository(Category::class)
-            ->findOneByName($category);
-
-        $articles = $category->getArticles();
-
-
-        if (!$articles) {
-            throw $this->createNotFoundException(
-                'No article found in category\'s table.'
-            );
-        }
-
-        return $this->render(
-            'blog/category.html.twig',
-            ['articles' => $articles,
-                'category' => $category]
-        );
-    }
-
-    /**
-     * @Route("/tag/{tag}", name="blog_show_tag")
-     * @return Response
-     */
-
-    public function showByTag(string $tag) : Response
-    {
-        $tag = $this->getDoctrine()
-            ->getRepository(Tag::class)
-            ->findOneBy(['name' => mb_strtolower($tag)]);
-
-        $articles = $tag->getArticles();
-
-        if (!$articles) {
-            throw $this->createNotFoundException(
-                'No article found in tag\'s table.'
-            );
-        }
-
-        return $this->render(
-            'blog/tag.html.twig',
-            ['articles' => $articles,
-                'tag' => $tag]
-        );
-
     }
 }

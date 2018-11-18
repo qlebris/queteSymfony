@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block body %}
+    <h1>All categories from category s table : </h1>
+    <ul>
+    {% for category in categories %}
+        <li>{{ loop.index }} / Category : <a href="/category/{{ category.name }}">{{ category.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <a href="{{ path('category_add') }}">
+        Add category.
+    </a>
+    <a href="{{ path('homepage') }}">
+        Back to homepage.
+    </a>
+{% endblock %}
