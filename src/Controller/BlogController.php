@@ -74,14 +74,14 @@ class BlogController extends AbstractController
 
     public function addCategory(Request $request): Response
     {
-        $form = $this->createForm(CategoryType::class);
+        $category = new Category();
+        $form = $this->createForm(CategoryType::class, $category    );
         $form->handleRequest($request);
 
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $category = new Category();
-            $category->setName($form->getData()->getName());
+            $category = $form->getData();
             $em->persist($category);
             $em->flush();
         }
