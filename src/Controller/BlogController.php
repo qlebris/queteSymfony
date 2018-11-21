@@ -11,6 +11,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Tag;
+use App\Form\ArticleType;
 use App\Form\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,6 +47,31 @@ class BlogController extends AbstractController
             ['articles' => $articles]
         );
     }
+    /**
+     * @Route("/article/add", name="article_add")
+     */
+
+    public function addArticle(Request $request): Response
+    {
+        $article = new Article();
+        $form = $this->createForm(ArticleType::class, $article);
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $category = $form->getData();
+            $em->persist($article);
+            $em->flush();
+        }
+
+
+        return $this->render('/blog/addArticle.html.twig',
+            ['form' => $form->createView()]
+        );
+
+    }
+
 
     /**
      * @Route("/categories", name="category_index")
