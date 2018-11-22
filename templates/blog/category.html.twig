@@ -7,10 +7,10 @@
 {% block body %}
     <h1>All articles for this category : </h1>
     {% for article in articles %}
-        <div>
-            <h2>{{ loop.index }} / {{ article.id }} - Category : {{ category.name }}</h2>
-            <p>{{ article.content }}</p>
-        </div>
+        <ul>
+            <li>{{ loop.index }} / {{ article.id }} - <a
+                        href="{{ path('article_show', {'id': article.id }) }}"> {{ article.title }}</a></li>
+        </ul>
     {% endfor %}
     <a href="{{ path('homepage') }}">
         Back to homepage.
