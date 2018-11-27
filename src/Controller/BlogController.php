@@ -13,6 +13,7 @@ use App\Entity\Category;
 use App\Entity\Tag;
 use App\Form\ArticleType;
 use App\Form\CategoryType;
+use App\Service\Slugify;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,11 +48,12 @@ class BlogController extends AbstractController
             ['articles' => $articles]
         );
     }
+
     /**
      * @Route("/article/add", name="article_add")
      */
 
-    public function addArticle(Request $request): Response
+    public function addArticle(Request $request, Slugify $slugify): Response
     {
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
@@ -60,6 +62,7 @@ class BlogController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $article->setSlug($slugify->generate($article->getTitle()));
             $category = $form->getData();
             $em->persist($article);
             $em->flush();
@@ -101,7 +104,7 @@ class BlogController extends AbstractController
     public function addCategory(Request $request): Response
     {
         $category = new Category();
-        $form = $this->createForm(CategoryType::class, $category    );
+        $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
 
 
