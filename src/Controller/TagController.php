@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Tag;
-use App\Form\TagType;
+use App\Form\Tag1Type;
 use App\Repository\TagRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class TagController extends AbstractController
     public function new(Request $request): Response
     {
         $tag = new Tag();
-        $form = $this->createForm(TagType::class, $tag);
+        $form = $this->createForm(Tag1Type::class, $tag);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -59,7 +59,7 @@ class TagController extends AbstractController
      */
     public function edit(Request $request, Tag $tag): Response
     {
-        $form = $this->createForm(TagType::class, $tag);
+        $form = $this->createForm(Tag1Type::class, $tag);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
